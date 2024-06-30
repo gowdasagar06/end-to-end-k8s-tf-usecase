@@ -9,7 +9,7 @@ mysql:
   pvcName: ebs-pvc
   serviceName: mysql
 twoTierApp:
-  image: gowdasagar/flaskapp:latest
+  image1: gowdasagar/flaskapp:latest
   mysqlHost: mysql
   mysqlUser: root
   mysqlPassword: admin

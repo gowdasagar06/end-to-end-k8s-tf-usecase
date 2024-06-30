@@ -29,7 +29,7 @@ phases:
       - export REPOSITORY_URI=654654515013.dkr.ecr.ap-south-1.amazonaws.com/flask-app
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - export IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
-      - export DEPLOYMENT_PATH="terraform/my-helm-chart/values.yaml"
+      - export DEPLOYMENT_PATH="my-helm-chart/values.yaml"
   build:
     commands:
       - echo "Build started on $(date)"
@@ -47,6 +47,8 @@ phases:
       - echo $NEW_IMAGE_NAME
       - sed -i "s|image1:.*|image1:$NEW_IMAGE_NAME|" $DEPLOYMENT_PATH
       - cat $DEPLOYMENT_PATH  
+      - echo "$AWS_ACCESS_KEY_ID"
+      - echo "$AWS_SECRET_ACCESS_KEY"
       - cd terraform
       - terraform init
       - terraform validate
