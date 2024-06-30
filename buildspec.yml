@@ -52,7 +52,7 @@ phases:
       - cd terraform
       - terraform init
       - terraform validate
-      - terraform plan
+      - terraform plan 
 
 artifacts:
   files:

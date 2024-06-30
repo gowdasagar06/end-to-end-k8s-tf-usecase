@@ -7,7 +7,7 @@ variable "vpc_cidr" {
   default = "10.0.0.0/16"
 }
 variable "node_desired_size" {
-  default = 2
+  default = 8
   type = number
 }
 variable "node_maximum_size" {
@@ -41,6 +41,6 @@ variable "public_1b_cidr" {
 }
 variable "node_types" {
   type    = list
-  default = ["t2.micro"]
+  default = ["t2.medium"]
 }
 

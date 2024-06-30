@@ -11,12 +11,13 @@ provider "helm" {
 }
 
 resource "helm_release" "aws-load-balancer-controller" {
+  timeout = 600
   name = "aws-load-balancer-controller"
-
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
   namespace  = "kube-system"
   version    = "1.4.1"
+  #  version    = "1.5.4"
 
   set {
     name  = "clusterName"
