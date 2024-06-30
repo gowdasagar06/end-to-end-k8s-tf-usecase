@@ -37,4 +37,4 @@ phases:
       # - terraform apply plan.out
 artifacts:
   files:
-    - '*/*'
+    - '**/*'
