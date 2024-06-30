@@ -15,43 +15,26 @@ phases:
       - wget https://releases.hashicorp.com/terraform/1.0.7/terraform_1.0.7_linux_amd64.zip
       - sudo rm -rf /usr/local/bin/terraform  # Remove existing Terraform directory
       - sudo unzip -o terraform_1.0.7_linux_amd64.zip -d /usr/local/bin/
-      - terraform --version 
+      - terraform --version
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
       - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
       - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
       - export Default_region_name="ap-south-1"
-      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 654654515013.dkr.ecr.ap-south-1.amazonaws.com
-      - export REPOSITORY_URI=654654515013.dkr.ecr.ap-south-1.amazonaws.com/flask-app
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - export IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
-      - export DEPLOYMENT_PATH="terraform/my-helm-chart/values.yaml"
   build:
     commands:
       - echo "Build started on $(date)"
-      - echo "Building the Docker image..."
-      - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
 
   post_build:
     commands:
       - echo "Build completed on $(date)"
-      - echo "Pushing the Docker images..."
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - export NEW_IMAGE_NAME=" $REPOSITORY_URI:$IMAGE_TAG"
-      - echo $NEW_IMAGE_NAME
-      - sed -i "s|image1:.*|image1:$NEW_IMAGE_NAME|" $DEPLOYMENT_PATH
-      - cat $DEPLOYMENT_PATH  
       - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
       - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
       - aws configure set region ap-south-1
       - cd terraform
-      - terraform init
-      - terraform validate
-      - terraform plan 
-
+      - terraform show plan.out
+      # - terraform apply plan.out
 artifacts:
   files:
     - '*/*'
