@@ -51,7 +51,7 @@ phases:
       - aws configure set region ap-south-1
       - cd terraform
       - echo "Running tfsec tests..."
-      - tfsec . --tfvars-file=terraform.tfvars > tfsec-report.txt 2>&1
+      - tfsec . --tfvars-file=terraform.tfvars 2>&1 | tee tfsec-report.txt
       - echo "tfsec tests completed."
       - terraform init
       - terraform validate
