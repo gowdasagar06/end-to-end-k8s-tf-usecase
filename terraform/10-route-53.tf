@@ -1,11 +1,11 @@
-resource "aws_route53_zone" "hosted-zone" {
-  name = "gowdasagar.online"
+# resource "aws_route53_zone" "hosted-zone" {
+#   name = "gowdasagar.online"
 
-  tags = {
-    Name = "test-hosted-zone"
-    provision = "terraform"
-  }
-}
+#   tags = {
+#     Name = "test-hosted-zone"
+#     provision = "terraform"
+#   }
+# }
 
 //create an alias A record 
 # resource "aws_route53_record" "alias-record" {
