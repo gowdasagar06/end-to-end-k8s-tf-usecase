@@ -34,7 +34,7 @@ phases:
       - aws configure set region ap-south-1
       - cd terraform
       - terraform show plan.out
-      # - terraform apply plan.out
+      - terraform apply plan.out
 artifacts:
   files:
     - '**/*'
