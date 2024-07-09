@@ -1,13 +1,13 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: {{ .Values.namespace }}
-  name: two-tier-app
+  namespace: prod
+  name: two
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: instance
-      # alb.ingress.kubernetes.io/rewrite-target: /
+    alb.ingress.kubernetes.io/rewrite-target: /
     alb.ingress.kubernetes.io/ip-address-type: ipv4
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
     alb.ingress.kubernetes.io/healthcheck-port: traffic-port
@@ -22,20 +22,12 @@ spec:
               service:
                 name: two-tier-app-service
                 port:
-                  number: 80
+                  number: 80  
 
-          - path: /nginx
+          - path: /new/
             pathType: Prefix
             backend:
               service:
-                name: nginx-svc
+                name: httpd-service
                 port:
-                  number: 80
-          - path: /new
-            pathType: Prefix
-            backend:
-              service:
-                name: two-tier-app-service
-                port:
-                  number: 80
-          
+                  number: 80  
