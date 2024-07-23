@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: httpd-config
-  namespace: prod
+  namespace: {{ .Values.namespace }}
 data:
   httpd.conf: |
     ServerRoot "/usr/local/apache2"

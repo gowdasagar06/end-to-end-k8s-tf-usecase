@@ -6,11 +6,6 @@ resource "helm_release" "my-helm-chart" {
   wait             = true
   reset_values     = true
 
-  # set {
-  #   name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-  #   value = aws_iam_role.karpenter_controller.arn
-  # }
-
   set {
     name  = "clusterName"
     value = aws_eks_cluster.demo.id
@@ -21,15 +16,10 @@ resource "helm_release" "my-helm-chart" {
     value = aws_eks_cluster.demo.endpoint
   }
 
-  # set {
-  #   name  = "aws.defaultInstanceProfile"
-  #   value = aws_iam_instance_profile.karpenter.name
-  # }
-
   depends_on = [aws_eks_node_group.private-nodes,
   helm_release.prometheus,
   helm_release.grafana,
-  # helm_release.nginx_ingress
+  helm_release.nginx_ingress
   ]
 }
 
@@ -72,9 +62,6 @@ resource "helm_release" "grafana" {
   wait             = true
   reset_values     = true
   max_history      = 3
-  #  values = [
-  #   file("values.yml")
-  # ]
   timeout = 2000
 
   set {
@@ -95,53 +82,46 @@ resource "helm_release" "grafana" {
   depends_on = [aws_eks_node_group.private-nodes]
 }
 
-# resource "helm_release" "nginx_ingress" {
-#   name       = "nginx-ingress"
-#   repository = "https://kubernetes.github.io/ingress-nginx"
-#   chart      = "ingress-nginx"
-#   namespace  = "ingress-nginx"
-#   create_namespace = true
-#   wait             = true
-#   reset_values     = true
-#   max_history      = 3
-#   timeout = 2000
+
+resource "helm_release" "nginx_ingress" {
+  name       = "nginx-ingress"
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  chart      = "ingress-nginx"
+  version    = "4.0.6"
+  namespace  = "nginx-ingress"
+  create_namespace = true
+
+  set {
+    name  = "controller.service.type"
+    value = "LoadBalancer"
+  }
+
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+    value = "nlb"
+  }
+
+  set {
+    name  = "controller.admissionWebhooks.enabled"
+    value = "false"
+  }
+ 
+  set {
+    name  = "installCRDs"
+    value = "true"
+  }
+
+  set {
+    name  = "clusterName"
+    value = aws_eks_cluster.demo.id
+  }
+
+  set {
+    name  = "clusterEndpoint"
+    value = aws_eks_cluster.demo.endpoint
+  }
   
-#   set {
-#     name  = "installCRDs"
-#     value = "true"
-#   }
+  depends_on = [aws_eks_node_group.private-nodes]
+}
 
-#   set {
-#     name  = "clusterName"
-#     value = aws_eks_cluster.demo.id
-#   }
 
-#   set {
-#     name  = "clusterEndpoint"
-#     value = aws_eks_cluster.demo.endpoint
-#   }
-#   set {
-#     name  = "controller.service.type"
-#     value = "LoadBalancer"
-#   }
-
-#   set {
-#     name  = "controller.publishService.enabled"
-#     value = "true"
-#   }
-#   set {
-#     name  = "controller.service.annotations.service.beta.kubernetes.io/aws-load-balancer-type"
-#     value = "nlb"
-#   }
-#   set {
-#     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
-#     value = "external"
-#   }
-
-#   set {
-#     name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-scheme"
-#     value = "internet-facing"
-#   }
-  
-#   depends_on = [aws_eks_node_group.private-nodes]
-# }
